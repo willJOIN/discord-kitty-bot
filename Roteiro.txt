@@ -1,0 +1,25 @@
+Hi everyone! I'm William and this is my CS50's final project.
+
+Kitty bot is a discord bot that understands text commands on chat rooms to play music on voice channels.
+
+Now, for the code explanation:
+
+Here we import the following libraries: discord.py, discord commands, python dotenv, youtube dl and OS.
+
+Here we can define the command prefix for our commands. I configured it to be a dot, by default.
+
+Here we have our first decorator to register an event, and in this case, all events will be asynchronous functions, which means we will be able to call any of them in no particular order.
+
+The first function is play, that accepts two arguments, the command and a URL. This function will check if the music is downloaded, accounting for base cases in the process and if everything's ok, it will connect the bot to the voice channel that the message's author is in. Then, it will pick a voice client. After that, we will set the preferences for our music to be downloaded by youtube dl. I chose the webm format because according to my experience it is way faster than mp4 files. 
+
+Youtube DL will grab the URL that we send, download the associate video and save as a webm file, with the name "music.webm". Then, it will convert to a file that Discord can play, with the software FFMPEG.
+
+The other 3 functions are pause, resume and stop, and with simple conditions, we pause, resume and stop the music. The "stop" command also removes the bot from the voice channel.
+
+The last part of the file reads our bot login token, that is hidden in a dot.env file for security purposes, since it is like an API key. With the functions on the python dot env library we can load the file and read only the token. This token is necessary for our bot to connect to discord.
+
+Now, for the showcase:
+
+Credit for the art
+
+

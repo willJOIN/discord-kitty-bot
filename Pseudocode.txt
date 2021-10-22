@@ -1,0 +1,34 @@
+Pseudocode
+
+develop in 'Wait for the current music to end or use the 'stop' command.'
+ft1: play while connected to voice channel
+ft2: bigger download speed
+
+Queue
+
+if command play received
+currentSong = convert download play
+
+if playing currentSong and command play received
+nextSong = url from play 
+
+if not playing currentSong and nextSong exists
+nextSong = convert download play  
+
+
+
+Simultaneous or Sequential?
+currentSong = convert download play
+or
+currentSong = convert download play
+currentSong
+or 
+currentSong = convert download play
+convert download play
+
+
+
+Loop
+
+while command loop true
+play playing song infinitely
