@@ -1,7 +1,7 @@
 Pseudocode
 
-develop in 'Wait for the current music to end or use the 'stop' command.'
-ft1: play while connected to voice channel
+change repo from private to public 
+ft1: play while connected to voice channel without stop
 ft2: bigger download speed
 
 Queue
