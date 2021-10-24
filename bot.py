@@ -19,12 +19,11 @@ async def play(ctx, url: str):
         # .webm
         "format": "249/250/251"
     }
-   
+
     if play_count == 0:
         # Join author's voice channel
         voice_channel = ctx.author.voice.channel
-        if not voice_client.is_connected():
-            await voice_channel.connect()
+        await voice_channel.connect()
         # Pick voice client
         voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
         current_song_there = os.path.isfile("current_song.webm")
@@ -45,7 +44,6 @@ async def play(ctx, url: str):
         queue.append(current_song)
         play_count += 1
     else:
-         # Pick voice client
         voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
         next_song_there = os.path.isfile("next_song.webm")
         try:
@@ -56,13 +54,10 @@ async def play(ctx, url: str):
         with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
             ydl.download([url])
         for file in os.listdir("./"):
-            if file.endswith(".webm"):
-                if file.startswith("current_song"):
-                    return
-            os.rename(file, "next_song.webm")
-        if not voice_client.is_playing():
-            next_song = voice_client.play((discord.FFmpegOpusAudio(
-                "next_song.webm")), after=queue.pop(0))
+            if file.endswith(".webm") and not file.startswith("current_song"):
+                os.rename(file, "next_song.webm")
+        while not voice_client.is_playing():  # Bug
+            next_song = voice_client.play((discord.FFmpegOpusAudio("next_song.webm")), after=queue.pop(0))
             queue.append(next_song)
             play_count += 1
 

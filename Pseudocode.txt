@@ -1,35 +1,7 @@
 Pseudocode
 
-change repo from private to public 
-ft1: play while connected to voice channel without stop, for this play should stop attempting to connect again to voice channel
-THE SECRET IS IN STOP FUNCTION
-ft2: bigger download speed
+ft1: Infinite Loop
+ft2: Play Queue
+ft3: Faster download speed
 
-Queue
-
-if command play received
-currentSong = convert download play
-
-if playing currentSong and command play received
-nextSong = url from play 
-
-if not playing currentSong and nextSong exists
-nextSong = convert download play  
-
-
-
-Simultaneous or Sequential?
-currentSong = convert download play
-or
-currentSong = convert download play
-currentSong
-or 
-currentSong = convert download play
-convert download play
-
-
-
-Loop
-
-while command loop true
-play playing song infinitely
+Change repo from private to public
