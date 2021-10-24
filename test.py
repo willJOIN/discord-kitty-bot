@@ -1,14 +1,30 @@
-import os
-from tkinter import Tcl
+import discord
+from discord.ext import commands
 
-file_list = os.listdir("./")
+loop = False
+queue = []
 
-sort = Tcl().call('lsort', '-dict', file_list)
+async def loop(ctx):
+    global loop
+    if loop == True:
+        await ctx.send("Loop OFF.")
+        loop = False
+    else:
+        await ctx.send("Loop ON.")
+        loop = True
 
-print(sort)
 
-# Convert and play files in ascending order
-for i, file in enumerate(os.listdir("./")):
-    if file.endswith(".webm"):
-        queue = Tcl().call('lsort', '-dict', os.listdir("./"))
-        voice_client.play(discord.FFmpegOpusAudio("queue[i]"))
+
+
+
+current_song = 1
+next_song = 2
+
+# When play_count == 0
+queue.append(current_song)
+# When play_count > 1
+queue.append(next_song)
+
+# When current_song finishes, pop first one
+voice_client.play(discord.FFmpegOpusAudio("current_song.webm"), after = queue.pop(0)) 
+voice_client.play(discord.FFmpegOpusAudio("next_song.webm"), after = queue.pop(0)) 

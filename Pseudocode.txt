@@ -1,7 +1,8 @@
 Pseudocode
 
 change repo from private to public 
-ft1: play while connected to voice channel without stop
+ft1: play while connected to voice channel without stop, for this play should stop attempting to connect again to voice channel
+THE SECRET IS IN STOP FUNCTION
 ft2: bigger download speed
 
 Queue

@@ -6,55 +6,73 @@ import youtube_dl
 
 # Commands starts with "."
 client = commands.Bot(command_prefix=".")
-
-# Decorator to register function
+play_count = 0
+queue = []
 
 
 @client.command()
 # Asynchronous function that requires two arguments, ctx and url, also casts url to str
 async def play(ctx, url: str):
-    current_song_there = os.path.isfile("song_1.webm")
-    next_song_there = os.path.isfile("song_2.webm")
-    try:
-        if current_song_there:
-            os.remove("song_1.webm")
-        elif next_song_there:
-            os.remove("song_2.webm")
-    except:
-        return
+    global play_count
+    global queue
     ydl_prefs = {
         # .webm
         "format": "249/250/251"
     }
-    play_count = 0
+   
     if play_count == 0:
         # Join author's voice channel
-        voice_channel = ctx.author.voice.channel  # bug
-        await voice_channel.connect()
+        voice_channel = ctx.author.voice.channel
+        if not voice_client.is_connected():
+            await voice_channel.connect()
         # Pick voice client
         voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        # Download file
-        with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
-            ydl.download([url])
-        # Store and rename file
-        for i, file in enumerate(os.listdir("./")):
-            if file.endswith(".webm"):
-                os.rename(file, "./"+'song_' + str(i - 3).zfill(1)+".webm")
-        # Convert and play file
-        voice_client.play(discord.FFmpegOpusAudio("song_1.webm"))
-        play_count = + 1
-    elif play_count == 1:
-        # Download file
-        with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
-            ydl.download([url])
-        # Store and rename file
-        for i, file in enumerate(os.listdir("./")):
-            if file.endswith(".webm"):
-                os.rename(file, "./"+'song_' + str(i - 3).zfill(1)+".webm")
-        # Convert and play file
-        while voice_client.is_playing():
+        current_song_there = os.path.isfile("current_song.webm")
+        try:
+            if current_song_there:
+                os.remove("current_song.webm")
+        except:
             return
-        voice_client.play(discord.FFmpegOpusAudio("song_2.webm"))
+        # Download file
+        with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
+            ydl.download([url])
+        # Store and rename file
+        for file in os.listdir("./"):
+            if file.endswith(".webm"):
+                os.rename(file, "current_song.webm")
+        # Convert and play file
+        current_song = voice_client.play(discord.FFmpegOpusAudio("current_song.webm"))
+        queue.append(current_song)
+        play_count += 1
+    else:
+         # Pick voice client
+        voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
+        next_song_there = os.path.isfile("next_song.webm")
+        try:
+            if next_song_there:
+                os.remove("next_song.webm")
+        except:
+            return
+        with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
+            ydl.download([url])
+        for file in os.listdir("./"):
+            if file.endswith(".webm"):
+                if file.startswith("current_song"):
+                    return
+            os.rename(file, "next_song.webm")
+        if not voice_client.is_playing():
+            next_song = voice_client.play((discord.FFmpegOpusAudio(
+                "next_song.webm")), after=queue.pop(0))
+            queue.append(next_song)
+            play_count += 1
+
+
+@client.command()
+async def loop(ctx):
+    voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    await ctx.send("Looping current music.")
+    if not voice_client.is_playing():
+        voice_client.play(discord.FFmpegOpusAudio("current_song.webm"))
 
 
 @client.command()
