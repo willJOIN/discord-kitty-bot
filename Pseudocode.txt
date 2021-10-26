@@ -1,7 +1,0 @@
-Pseudocode
-
-ft1: Infinite Loop
-ft2: Play Queue
-ft3: Faster download speed
-
-Change repo from private to public
