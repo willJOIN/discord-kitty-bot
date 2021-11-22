@@ -1,3 +1,5 @@
 ffmpeg/
-* .webm
-* .env
+.idea/
+current_song.webm
+next_song.webm
+*.env
