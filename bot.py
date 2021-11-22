@@ -7,95 +7,121 @@ import youtube_dl
 # Commands starts with "."
 client = commands.Bot(command_prefix=".")
 play_count = 0
-queue = []
 
 
 @client.command()
 # Asynchronous function that requires two arguments, ctx and url, also casts url to str
 async def play(ctx, url: str):
     global play_count
-    global queue
     ydl_prefs = {
         # .webm
         "format": "249/250/251"
     }
-
     if play_count == 0:
         # Join author's voice channel
         voice_channel = ctx.author.voice.channel
         await voice_channel.connect()
         # Pick voice client
         voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        current_song_there = os.path.isfile("current_song.webm")
-        try:
-            if current_song_there:
-                os.remove("current_song.webm")
-        except:
-            return
         # Download file
-        with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
-            ydl.download([url])
+        try:
+            await ctx.send("Downloading meowsic, ~meow")
+            with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
+                ydl.download([url])
+        except:
+            await ctx.send("Unexpected error when trying to download. Please try again, ~meow")
+            return
         # Store and rename file
+        try:
+            os.remove("current_song.webm")
+            os.remove("next_song.webm")
+        except:
+            pass
         for file in os.listdir("./"):
             if file.endswith(".webm"):
                 os.rename(file, "current_song.webm")
         # Convert and play file
-        current_song = voice_client.play(discord.FFmpegOpusAudio("current_song.webm"))
-        queue.append(current_song)
+        voice_client.play(discord.FFmpegOpusAudio("current_song.webm"))
+        await ctx.send("Playing meowsic, ~meow")
         play_count += 1
     else:
         voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        next_song_there = os.path.isfile("next_song.webm")
-        try:
-            if next_song_there:
+        if voice_client.is_playing():
+            await ctx.send("Wait for me to finish the current meowsic, ~meow")
+        else:
+            try:
+                await ctx.send("Downloading meowusic, ~meow")
+                with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
+                    ydl.download([url])
+            except:
+                await ctx.send("Unexpected error when trying to download... maybe try again?")
+                return
+            try:
                 os.remove("next_song.webm")
-        except:
-            return
-        with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
-            ydl.download([url])
-        for file in os.listdir("./"):
-            if file.endswith(".webm") and not file.startswith("current_song"):
-                os.rename(file, "next_song.webm")
-        while not voice_client.is_playing():  # Bug
-            next_song = voice_client.play((discord.FFmpegOpusAudio("next_song.webm")), after=queue.pop(0))
-            queue.append(next_song)
+            except:
+                pass
+            for file in os.listdir("./"):
+                if file.endswith(".webm") and not file.startswith("current_song"):
+                    os.rename(file, "next_song.webm")
+            await ctx.send("Playing meowsic, ~meow")
+            voice_client.play(discord.FFmpegOpusAudio("next_song.webm"))
             play_count += 1
 
 
 @client.command()
 async def loop(ctx):
     voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    await ctx.send("Looping current music.")
+    if play_count == 0:
+        await ctx.send("I haven't played any meowsic, ~meow")
     if not voice_client.is_playing():
-        voice_client.play(discord.FFmpegOpusAudio("current_song.webm"))
+        await ctx.send("Looping current meowsic, ~meow")
+        if play_count == 1:
+            voice_client.play(discord.FFmpegOpusAudio("current_song.webm"))
+        elif play_count >= 2:
+            voice_client.play(discord.FFmpegOpusAudio("next_song.webm"))
+    else:
+        await ctx.send("Please wait for the meowsic to end before asking me to loop it, ~meow")
 
 
 @client.command()
 async def pause(ctx):
     voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if voice_client.is_playing():
-        voice_client.pause()
-    else:
-        await ctx.send("I'm not playing any music.")
+    try:
+        if voice_client.is_playing():
+            await ctx.send("Meowsic is paused, ~meow")
+            voice_client.pause()
+    except:
+        await ctx.send("I'm not playing any meowsic, ~meow")
 
 
 @client.command()
 async def resume(ctx):
     voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if voice_client.is_paused():
-        voice_client.resume()
-    else:
+    try:
+        if voice_client.is_paused():
+            await ctx.send("Resuming meowsic playback, ~meow")
+            voice_client.resume()
+    except:
         await ctx.send("I'm not paused.")
 
 
 @client.command()
 async def stop(ctx):
     voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if voice_client.is_connected():
-        voice_client.stop()
-        await voice_client.disconnect()
-    else:
+    try:
+        if voice_client.is_connected():
+            await ctx.send("Bye bye! ~meow")
+            voice_client.stop()
+            await voice_client.disconnect()
+    except:
         await ctx.send("I'm not on a voice channel.")
+
+
+@client.command()
+async def easteregg(ctx):
+    voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
+    await ctx.send("You found my secret! ~meow")
+    voice_client.play(discord.FFmpegOpusAudio("easter_egg.webm"))
 
 # Read bot login token in hidden .env file
 dotenv.load_dotenv(dotenv.find_dotenv())
