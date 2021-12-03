@@ -117,12 +117,6 @@ async def stop(ctx):
         await ctx.send("I'm not on a voice channel.")
 
 
-@client.command()
-async def easteregg(ctx):
-    voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    await ctx.send("You found my secret! ~meow")
-    voice_client.play(discord.FFmpegOpusAudio("easter_egg.webm"))
-
 # Read bot login token in hidden .env file
 dotenv.load_dotenv(dotenv.find_dotenv())
 token = os.getenv("token")
