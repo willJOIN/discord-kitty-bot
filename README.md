@@ -1,6 +1,8 @@
 # Kitty Bot
 
-#### Video Demo: <https://youtu.be/awVm6usYhhw>
+#### Video Demo: 
+
+<https://youtu.be/awVm6usYhhw>
 
 #### Description:
 
