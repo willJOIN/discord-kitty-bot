@@ -26,10 +26,12 @@ async def play(ctx, url: str):
         # Download file
         try:
             await ctx.send("Downloading meowsic, ~meow")
+            voice_client.play(discord.FFmpegOpusAudio("assets\sound1.mp3"))
             with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
                 ydl.download([url])
         except:
             await ctx.send("Unexpected error when trying to download. Please try again, ~meow")
+            voice_client.play(discord.FFmpegOpusAudio("assets\sound2.mp3"))
             return
         # Store and rename file
         try:
@@ -51,10 +53,12 @@ async def play(ctx, url: str):
         else:
             try:
                 await ctx.send("Downloading meowusic, ~meow")
+                voice_client.play(discord.FFmpegOpusAudio("assets\sound2.mp3"))
                 with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
                     ydl.download([url])
             except:
                 await ctx.send("Unexpected error when trying to download... maybe try again?")
+                voice_client.play(discord.FFmpegOpusAudio("assets\sound3.mp3"))
                 return
             try:
                 os.remove("next_song.webm")
@@ -102,7 +106,7 @@ async def resume(ctx):
             await ctx.send("Resuming meowsic playback, ~meow")
             voice_client.resume()
     except:
-        await ctx.send("I'm not paused.")
+        await ctx.send("I'm not paused, ~meow")
 
 
 @client.command()
