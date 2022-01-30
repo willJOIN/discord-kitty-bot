@@ -26,7 +26,7 @@ async def play(ctx, url: str):
         # Download file
         try:
             await ctx.send("Downloading meowsic, ~meow")
-            voice_client.play(discord.FFmpegOpusAudio("/assets/sound1.mp3"))
+            voice_client.play(discord.FFmpegOpusAudio("assets\sound1.mp3"))
             with youtube_dl.YoutubeDL(ydl_prefs) as ydl:
                 ydl.download([url])
         except:
